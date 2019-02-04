@@ -101,6 +101,8 @@ namespace ESGamePadDetect
                     xml = sww.ToString();
                 }
             }
+
+            Console.Write(xml);
         }
     }
 }
