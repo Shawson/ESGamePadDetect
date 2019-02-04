@@ -1,6 +1,6 @@
 # ESGamePadDetect
 
-Simple command line app which returns XML.  
+Simple command line app which returns XML.  Originally built for use with https://github.com/Shawson/RetroWin
 
 Developed for use with a POWERSHELL script I'm working on, this takes the DeviceName and DeviceGUID from an EmulationStation es_input.cfg file, and tries to lookup the given details against DirectInput to grab the controllers Product Id & Vendor Id (VID/PID).  This can then be used to match this config with the Autoconfig files used to RetroArch.
 
