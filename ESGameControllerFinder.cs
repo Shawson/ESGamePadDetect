@@ -13,18 +13,19 @@ namespace ESGamePadDetect
 
         public GameControllerIdentifiers FindController(string deviceName, string deviceGUID)
         {
-            int joystickIndex = -1;
             /*
-                        deviceGUID = "78696e70757401000000000000000000";
-                        deviceName = "#1";
-                        deviceGUID = "a0053232000000000000504944564944";
-                        */
+            deviceGUID = "78696e70757401000000000000000000";
+            deviceName = "#1";
+            deviceGUID = "a0053232000000000000504944564944";
+            */
 
             var guidByteArray = FromHex(deviceGUID);
             GameControllerIdentifiers controllerIds = null;
 
             if (System.Text.Encoding.UTF8.GetString(guidByteArray).StartsWith("xinput"))
             {
+                int joystickIndex = 1; // set a default - if there is a no player number supplied, we can guess it's port 0
+                
                 if (deviceName.Contains("#"))
                 {
                     var strJoyStickIndex = deviceName.Split('#')
