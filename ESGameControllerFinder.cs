@@ -1,5 +1,6 @@
 ﻿using SharpDX.DirectInput;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ESGamePadDetect
@@ -9,6 +10,43 @@ namespace ESGamePadDetect
         public ESGameControllerFinder()
         {
 
+        }
+
+        public List<GameControllerIdentifiers> GetXInputDevices(int? index = null)
+        {
+            var controllers = new List<GameControllerIdentifiers>();
+
+            using (var directInput = new DirectInput())
+            {
+                var joystickGuid = Guid.Empty;
+
+                foreach (var deviceInstance in directInput.GetDevices(SharpDX.DirectInput.DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
+                {
+                    joystickGuid = deviceInstance.InstanceGuid;
+
+                    using (var js = new Joystick(directInput, joystickGuid))
+                    {
+                        if (index == null || js.Properties.JoystickId == (index - 1))
+                        {
+                            controllers.Add(new GameControllerIdentifiers
+                            {
+                                PID = js.Properties.ProductId,
+                                VID = js.Properties.VendorId,
+                                DeviceName = js.Properties.ProductName,
+                                ControllerIndex = js.Properties.JoystickId
+                            });
+
+                            /*
+                            if (js.Properties.InterfacePath.ToLower().Contains("&ig_"))
+                                Console.WriteLine("XINPUT Controller");
+                                */
+                        }
+                    }
+
+                }
+            }
+
+            return controllers;
         }
 
         public GameControllerIdentifiers FindController(string deviceName, string deviceGUID)
@@ -38,7 +76,8 @@ namespace ESGamePadDetect
                     }
                 }
 
-                controllerIds = GetXInputDevice(joystickIndex);
+                controllerIds = GetXInputDevices(joystickIndex)
+                    .FirstOrDefault();
             }
             else
             {
@@ -52,40 +91,6 @@ namespace ESGamePadDetect
             }
 
             return controllerIds;
-        }
-
-        private static GameControllerIdentifiers GetXInputDevice(int index)
-        {
-            using (var directInput = new DirectInput())
-            {
-                var joystickGuid = Guid.Empty;
-
-                foreach (var deviceInstance in directInput.GetDevices(SharpDX.DirectInput.DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices))
-                {
-                    joystickGuid = deviceInstance.InstanceGuid;
-
-                    using (var js = new Joystick(directInput, joystickGuid))
-                    {
-                        if (js.Properties.JoystickId == (index - 1))
-                        {
-                            return new GameControllerIdentifiers
-                            {
-                                PID = js.Properties.ProductId,
-                                VID = js.Properties.VendorId,
-                                DeviceName = js.Properties.ProductName
-                            };
-
-                            /*
-                            if (js.Properties.InterfacePath.ToLower().Contains("&ig_"))
-                                Console.WriteLine("XINPUT Controller");
-                                */
-                        }
-                    }
-
-                }
-            }
-
-            return null;
         }
 
         private static byte[] FromHex(string hex)

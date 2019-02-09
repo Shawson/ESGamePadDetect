@@ -12,5 +12,6 @@
         /// </summary>
         public int VID { get; set; }
         public string DeviceName { get; set; }
+        public int ControllerIndex { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using NDesk.Options;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace ESGamePadDetect
 {
@@ -14,9 +15,11 @@ namespace ESGamePadDetect
                 deviceName = string.Empty,
                 deviceGUID = string.Empty;
 
-            bool printHelp = false;
+            bool printHelp = false,
+                listMode = false;
 
             var p = new OptionSet() {
+                { "l|list", "list all connected devices", v => listMode = true },
                 { "n|deviceName=", "device name from es_input.cfg file", v => deviceName = v },
                 { "g|deviceGUID=", "device guid from es_input.cfg file", v => deviceGUID = v },
                 { "h|?|help", "Get help", v => printHelp = true }
@@ -43,6 +46,20 @@ namespace ESGamePadDetect
                 Console.WriteLine("Outputs in XML");
                 p.WriteOptionDescriptions(Console.Out);
                 return 1;
+            }
+
+            if (listMode)
+            {
+                var controllerIdCollection = new ESGameControllerFinder()
+                    .GetXInputDevices();
+
+                SerialiseAndWrite(new BaseCommandLineResponse<List<GameControllerIdentifiers>>
+                {
+                    ResponseCode = 0,
+                    ResponseMessage = "Ok",
+                    Data = controllerIdCollection
+                });
+                return 0;
             }
 
             if (deviceName == string.Empty)
@@ -88,9 +105,9 @@ namespace ESGamePadDetect
             return 0;
         }
 
-        static void SerialiseAndWrite(BaseCommandLineResponse<GameControllerIdentifiers> obj)
+        static void SerialiseAndWrite<T>(T obj)
         {
-            XmlSerializer xsSubmit = new XmlSerializer(typeof(BaseCommandLineResponse<GameControllerIdentifiers>));
+            XmlSerializer xsSubmit = new XmlSerializer(typeof(T));
             var xml = "";
 
             using (var sww = new StringWriter())
