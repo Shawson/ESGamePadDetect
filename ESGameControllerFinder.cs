@@ -33,13 +33,9 @@ namespace ESGamePadDetect
                                 PID = js.Properties.ProductId,
                                 VID = js.Properties.VendorId,
                                 DeviceName = js.Properties.ProductName,
-                                ControllerIndex = js.Properties.JoystickId
+                                ControllerIndex = js.Properties.JoystickId,
+                                IsXInput = js.Properties.InterfacePath.ToLower().Contains("&ig_")
                             });
-
-                            /*
-                            if (js.Properties.InterfacePath.ToLower().Contains("&ig_"))
-                                Console.WriteLine("XINPUT Controller");
-                                */
                         }
                     }
 
