@@ -13,6 +13,6 @@
         public int VID { get; set; }
         public string DeviceName { get; set; }
         public int ControllerIndex { get; set; }
-        public bool IsXInput { get; internal set; }
+        public bool IsXInput { get; set; }
     }
 }
