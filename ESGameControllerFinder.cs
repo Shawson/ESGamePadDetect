@@ -40,6 +40,26 @@ namespace ESGamePadDetect
                     }
 
                 }
+                foreach (var deviceInstance in directInput.GetDevices(SharpDX.DirectInput.DeviceType.Joystick, DeviceEnumerationFlags.AllDevices))
+                {
+                    joystickGuid = deviceInstance.InstanceGuid;
+
+                    using (var js = new Joystick(directInput, joystickGuid))
+                    {
+                        if (index == null || js.Properties.JoystickId == (index - 1))
+                        {
+                            controllers.Add(new GameControllerIdentifiers
+                            {
+                                PID = js.Properties.ProductId,
+                                VID = js.Properties.VendorId,
+                                DeviceName = js.Properties.ProductName,
+                                ControllerIndex = js.Properties.JoystickId,
+                                IsXInput = js.Properties.InterfacePath.ToLower().Contains("&ig_")
+                            });
+                        }
+                    }
+
+                }
             }
 
             return controllers;
