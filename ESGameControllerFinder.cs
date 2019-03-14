@@ -100,8 +100,8 @@ namespace ESGamePadDetect
                 // this is not an xinput controller!- all the info was given to us up fronf and just needs extracting
                 controllerIds = new GameControllerIdentifiers
                 {
-                    VID = BitConverter.ToInt16(guidByteArray, 0),
-                    PID = BitConverter.ToInt16(guidByteArray, 2),
+                    VID = BitConverter.ToUInt16(guidByteArray, 0),
+                    PID = BitConverter.ToUInt16(guidByteArray, 2),
                     DeviceName = deviceName
                 };
             }
